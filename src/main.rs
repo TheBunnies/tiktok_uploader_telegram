@@ -6,7 +6,7 @@ use tiktok_uploader_telegram::tiktok::*;
 #[tokio::main]
 async fn main() {
     teloxide::enable_logging!();
-    log::info!("Starting dices_bot...");
+    log::info!("String tiktok uploader bot...");
 
     let bot = Bot::from_env().auto_send();
 
