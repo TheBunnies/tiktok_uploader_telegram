@@ -1311,6 +1311,7 @@ name = "tiktok_uploader_telegram"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "lazy_static",
  "log",
  "ms-converter",
  "pretty_env_logger",
