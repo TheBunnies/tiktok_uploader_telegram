@@ -44,9 +44,9 @@ pub mod tiktok {
             let ip = env::var("IP").unwrap();
             let port = env::var("PORT").unwrap();
 
-            let proxyUrl = format!("http://{}:{}@{}:{}", user, password, ip, port);
+            let proxy_url = format!("http://{}:{}@{}:{}", user, password, ip, port);
 
-            let proxy = reqwest::Proxy::http(proxyUrl)?;
+            let proxy = reqwest::Proxy::http(proxy_url)?;
 
             let client = reqwest::Client::builder()
                 .proxy(proxy)
