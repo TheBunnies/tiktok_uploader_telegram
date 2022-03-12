@@ -5,6 +5,7 @@ pub mod tiktok {
     use ms_converter::get_max_possible_duration_long;
     use url::Url;
     use chrono::prelude::*;
+    use std::env;
 
     #[derive(Serialize, Deserialize, Debug)]
     pub struct PlayAddr {
@@ -37,9 +38,31 @@ pub mod tiktok {
         pub async fn new(video_url : &str) -> Result<Response, Box<dyn std::error::Error>> {
             let id = get_id(video_url).await?;
             let url = format!("http://api2.musical.ly/aweme/v1/aweme/detail/?aweme_id={}", id);
-            let resp = reqwest::get(url)
-                    .await?;
-            let detail : Response = resp.json().await?;
+
+            let user = env::var("USER").unwrap();
+            let password = env::var("PASSWORD").unwrap();
+            let ip = env::var("IP").unwrap();
+            let port = env::var("PORT").unwrap();
+
+            let proxyUrl = format!("http://{}:{}@{}:{}", user, password, ip, port);
+
+            let proxy = reqwest::Proxy::http(proxyUrl)?;
+
+            let client = reqwest::Client::builder()
+                .proxy(proxy)
+                .build()?;
+
+            let resp = client.get(&url).send()
+                .await?;
+
+            let detail : Response;
+            if let Ok(state) = resp.json().await {
+                detail = state;
+            } else {
+                let res = reqwest::get(url).await?;
+                detail = res.json().await?;
+            }
+
             Ok(detail)
         }
         pub fn get_video_url(&self) -> Option<String> {

@@ -10,10 +10,9 @@ lazy_static! {
 #[tokio::main]
 async fn main() {
     teloxide::enable_logging!();
-    log::info!("String tiktok uploader bot...");
+    log::info!("Starting tiktok uploader bot...");
 
     let bot = Bot::from_env().auto_send();
-
     teloxide::repls2::repl(bot, |message: Message, bot: AutoSend<Bot>| async move {
         let message_text = message.text().unwrap();
         if REGEX.is_match(message_text) {
