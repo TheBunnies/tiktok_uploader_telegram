@@ -39,26 +39,30 @@ pub mod tiktok {
             let id = get_id(video_url).await?;
             let url = format!("http://api2.musical.ly/aweme/v1/aweme/detail/?aweme_id={}", id);
 
-            let user = env::var("USER").unwrap();
-            let password = env::var("PASSWORD").unwrap();
-            let ip = env::var("IP").unwrap();
-            let port = env::var("PORT").unwrap();
+            let user = env::var("USER").unwrap_or(String::new());
+            let password = env::var("PASSWORD").unwrap_or(String::new());
+            let ip = env::var("IP").unwrap_or(String::new());
+            let port = env::var("PORT").unwrap_or(String::new());
 
             let proxy_url = format!("http://{}:{}@{}:{}", user, password, ip, port);
 
             let proxy = reqwest::Proxy::http(proxy_url)?;
 
+
             let client = reqwest::Client::builder()
                 .proxy(proxy)
                 .build()?;
 
+
             let resp = client.get(&url).send()
-                .await?;
+                .await;
 
             let detail : Response;
-            if let Ok(state) = resp.json().await {
-                detail = state;
+            if let Ok(state) = resp {
+                println!("here 1");
+                detail = state.json().await?;
             } else {
+                println!("here 2");
                 let res = reqwest::get(url).await?;
                 detail = res.json().await?;
             }
