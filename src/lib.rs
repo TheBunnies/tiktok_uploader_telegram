@@ -59,10 +59,8 @@ pub mod tiktok {
 
             let detail : Response;
             if let Ok(state) = resp {
-                println!("here 1");
                 detail = state.json().await?;
             } else {
-                println!("here 2");
                 let res = reqwest::get(url).await?;
                 detail = res.json().await?;
             }

@@ -1,7 +1,22 @@
-FROM rust:latest
+FROM rust:latest as build
 
-COPY ./ ./
+RUN USER=root cargo new --bin tiktok_uploader_telegram
+WORKDIR /tiktok_uploader_telegram
+
+COPY ./Cargo.lock ./Cargo.lock
+COPY ./Cargo.toml ./Cargo.toml
+
 
 RUN cargo build --release
+RUN rm src/*.rs
 
-CMD ["./target/release/tiktok_uploader_telegram"]
+COPY ./src ./src
+
+RUN rm ./target/release/deps/tiktok_uploader_telegram*
+RUN cargo build --release
+
+FROM alpine:latest
+
+COPY --from=build /tiktok_uploader_telegram/target/release/tiktok_uploader_telegram .
+
+CMD ["./tiktok_uploader_telegram"]
