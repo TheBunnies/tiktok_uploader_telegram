@@ -15,7 +15,7 @@ COPY ./src ./src
 RUN rm ./target/release/deps/tiktok_uploader_telegram*
 RUN cargo build --release
 
-FROM alpine:latest
+FROM rust:1.49-slim-buster
 
 COPY --from=build /tiktok_uploader_telegram/target/release/tiktok_uploader_telegram .
 
