@@ -57,9 +57,12 @@ async fn main() {
         } else {
             let user = message.from();
             if let Some(state) = user {
-                let last_name = state.last_name.to_owned().unwrap_or(String::new());
-                log::info!("{} Rejected request `Not a tiktok link`: {} From user: {} {}/{}", Local::now(), message_text, state.first_name, last_name, state.id);
-                bot.send_message(message.chat_id(), "Not a tiktok link.").await?;
+                if message.chat.is_private() {
+                    let last_name = state.last_name.to_owned().unwrap_or(String::new());
+                    log::info!("{} Rejected request `Not a tiktok link`: {} From user: {} {}/{}", Local::now(), message_text, state.first_name, last_name, state.id);
+                    bot.send_message(message.chat_id(), "Not a tiktok link.").await?;
+                }
+
             }
         }
         respond(())
