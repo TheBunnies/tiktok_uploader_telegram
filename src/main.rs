@@ -18,6 +18,11 @@ async fn main() {
 
     teloxide::repls2::repl(bot, |message: Message, bot: AutoSend<Bot>| async move {
         let message_text = message.text().unwrap_or_default();
+        let m = REGEX.find(message_text);
+        let message_text = match m {
+            None => "",
+            Some(state) => state.as_str()
+        };
         if REGEX.is_match(message_text) {
             let resp = Response::new(message_text).await.ok();
             let response: Response;
