@@ -16,7 +16,7 @@ async fn main() {
 
     let bot = Bot::from_env().auto_send();
 
-    teloxide::repls2::repl(bot, |message: Message, bot: AutoSend<Bot>| async move {
+    teloxide::repl(bot, |message: Message, bot: AutoSend<Bot>| async move {
         let message_text = message.text().unwrap_or_default();
         let m = REGEX.find(message_text);
         let message_text = match m {
@@ -41,7 +41,7 @@ async fn main() {
                 let user = message.from().unwrap();
                 let last_name = user.last_name.to_owned().unwrap_or(String::new());
                 log::info!("{} Couldn't download the video: {} From user: {} {}/{}", Local::now(), message_text, user.first_name, last_name, user.id.0);
-                bot.send_message(message.chat_id(), "Could not download the specified video, please try again later.").await?;
+                bot.send_message(message.chat.id, "Could not download the specified video, please try again later.").await?;
                 return respond(());
             }
             let user = message.from().unwrap();
@@ -54,18 +54,18 @@ async fn main() {
                                   response.get_duration(),
                                   response.get_date_created());
 
-            bot.send_message(message.chat_id(), content).await?;
-            bot.send_video(message.chat_id(), file).await?;
+            bot.send_message(message.chat.id, content).await?;
+            bot.send_video(message.chat.id, file).await?;
             response.delete_video().await.expect("Could not delete the video... Starting to panic!!!");
         } else if message_text == "/start" {
-            bot.send_message(message.chat_id(), "Just send any tiktok link that leads to a valid video and I'll handle everything myself ;)").await?;
+            bot.send_message(message.chat.id, "Just send any tiktok link that leads to a valid video and I'll handle everything myself ;)").await?;
         } else {
             let user = message.from();
             if let Some(state) = user {
                 if message.chat.is_private() {
                     let last_name = state.last_name.to_owned().unwrap_or(String::new());
                     log::info!("{} Rejected request `Not a tiktok link`: {} From user: {} {}/{}", Local::now(), message_text, state.first_name, last_name, state.id.0);
-                    bot.send_message(message.chat_id(), "Not a tiktok link.").await?;
+                    bot.send_message(message.chat.id, "Not a tiktok link.").await?;
                 }
 
             }
