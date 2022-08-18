@@ -11,6 +11,7 @@ lazy_static! {
 
 #[tokio::main]
 async fn main() {
+    pretty_env_logger::init();
     log::info!("{} Starting tiktok uploader bot...", Local::now());
 
     let bot = Bot::from_env().auto_send();
